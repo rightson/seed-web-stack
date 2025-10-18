@@ -233,6 +233,7 @@ export const getContext = (request: Request) => {
 - 🏗️ [Technical Architecture](docs/tech.md)
 - 📦 [Project Structure](docs/structure.md)
 - 🎯 [Product Features](docs/product.md)
+- 🎨 [Design Choices & Tradeoffs](docs/design-choices.md)
 
 ## License
 

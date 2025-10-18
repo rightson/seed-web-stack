@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "cd apps/web && next dev",
+    "dev": "nx dev seed-web-stack-web",
+    "dev:next": "cd apps/web && next dev",
     "build": "nx build seed-web-stack-web",
     "relay": "nx relay seed-web-stack-web",
     "db:migrate": "npx prisma migrate dev",
