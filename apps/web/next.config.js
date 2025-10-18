@@ -12,6 +12,12 @@ const nextConfig = {
   nx: {
     svgr: false,
   },
+  webpack: (config) => {
+    // Ensure __generated__ directory is properly resolved
+    config.resolve.modules = config.resolve.modules || [];
+    config.resolve.modules.push(__dirname);
+    return config;
+  },
 };
 
 const plugins = [
