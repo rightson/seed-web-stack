@@ -1,62 +1,42 @@
-# Seed Web Stack - Modern Full-Stack Monorepo
+# Seed Web Stack
 
-A production-ready web application starter template featuring a modern authentication system built with industry-standard tools and best practices.
+> Production-ready full-stack monorepo with Next.js 15, GraphQL, Relay, and Prisma
 
-## Tech Stack
+A modern web application starter featuring type-safe end-to-end development, GraphQL API with optimized client-side caching, and built-in authentication—all within a smart monorepo architecture.
 
-- **Next.js 15** - React framework with App Router
-- **GraphQL Yoga** - Lightweight GraphQL server
-- **Relay** - High-performance GraphQL client
-- **Prisma** - Type-safe ORM (PostgreSQL/SQLite)
-- **Tailwind CSS v4** - Utility-first CSS framework
-- **Nx** - Smart monorepo build system
-- **TypeScript** - End-to-end type safety
-- **JWT** - Secure authentication
-- **bcrypt** - Password hashing
+## Features
+
+- 🚀 **Next.js 15** with App Router and React Server Components
+- 🔐 **Built-in Authentication** - JWT-based auth with bcrypt password hashing
+- 📊 **GraphQL API** - Type-safe API with Yoga server and Relay client
+- 🗄️ **Prisma ORM** - Type-safe database access with migrations
+- 🎨 **Tailwind CSS v4** - Modern utility-first styling
+- 📦 **Nx Monorepo** - Smart build system with caching
+- 🔒 **TypeScript** - Full type safety across frontend and backend
+- ⚡ **Optimized Performance** - Relay's intelligent query batching and caching
 
 ## Quick Start
 
-### Prerequisites
-- Node.js 20+ and npm
-- Git
+```bash
+# Clone and install dependencies
+git clone https://github.com/rightson/seed-web-stack
+cd seed-web-stack
+npm install
 
-### Installation
+# Configure environment
+cat > .env << EOF
+DATABASE_URL="postgresql://postgres:mypassword@localhost:5432/myapp"
+JWT_SECRET="your-secret-key-change-in-production"
+EOF
 
-1. **Clone and Install**
-   ```bash
-   git clone https://github.com/rightson/seed-web-stack
-   cd seed-web-stack
-   npm install
-   ```
+# Setup database and start development
+npx prisma migrate dev
+npm run dev
+```
 
-2. **Environment Setup**
+Visit [http://localhost:3000](http://localhost:3000)
 
-   Create a `.env` file in the root:
-   ```env
-   DATABASE_URL="postgresql://postgres:mypassword@localhost:5432/myapp"
-   JWT_SECRET="your-secret-key-change-in-production"
-   ```
-
-   **For SQLite (simpler, no DB server needed):**
-   ```env
-   DATABASE_URL="file:./dev.db"
-   JWT_SECRET="your-secret-key-change-in-production"
-   ```
-
-3. **Database Setup**
-   ```bash
-   npx prisma generate
-   npx prisma migrate dev --name init
-   ```
-
-4. **Start Development Server**
-   ```bash
-   npm run dev
-   ```
-
-   *Note: Relay GraphQL types are automatically generated when you run `npm run dev`. NX detects GraphQL code changes and triggers the Relay compiler automatically.*
-
-Visit [http://localhost:3000](http://localhost:3000) to see your app.
+> **Note:** Relay compiler runs automatically via Nx when GraphQL files change. For SQLite, use `DATABASE_URL="file:./dev.db"` instead.
 
 ## Project Structure
 
@@ -102,64 +82,47 @@ seed-web-stack/
 
 See [docs/structure.md](docs/structure.md) for detailed information.
 
-## Features
+## Tech Stack
 
-### Authentication & Security
-- ✅ User registration with email validation
-- ✅ Secure login with JWT tokens
-- ✅ Password hashing with bcrypt
-- ✅ Protected routes and server-side auth
-- ✅ Token-based session management
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Frontend** | Next.js 15 + React 19 | App Router, RSC, streaming SSR |
+| **GraphQL Client** | Relay | Normalized cache, automatic batching, persisted queries |
+| **GraphQL Server** | GraphQL Yoga | Standards-compliant, lightweight, extensible |
+| **Database** | Prisma + PostgreSQL/SQLite | Type-safe ORM with declarative migrations |
+| **Styling** | Tailwind CSS v4 | Just-in-time compilation, zero runtime |
+| **Monorepo** | Nx | Distributed task execution, computation caching |
+| **Auth** | JWT + bcrypt | Stateless authentication, secure password hashing |
 
-### Development Experience
-- ✅ Full TypeScript support
-- ✅ Type-safe database queries with Prisma
-- ✅ Auto-generated GraphQL types with Relay
-- ✅ Automatic Relay compilation on file changes (NX watch)
-- ✅ Hot reload and fast refresh
-- ✅ Monorepo structure with Nx
-- ✅ Zero external dependencies (no watchman required)
+## What's Included
 
-### Architecture
-- ✅ GraphQL API with Yoga
-- ✅ Optimized queries with Relay
-- ✅ PostgreSQL/SQLite database support
-- ✅ Modern styling with Tailwind CSS v4
-- ✅ Component-based architecture
-- ✅ API route handlers
+- **Complete Authentication System** - Registration, login, protected routes, JWT token management
+- **GraphQL API** - Fully typed schema with resolvers for user authentication
+- **Database Layer** - Prisma schema with User model and migrations
+- **UI Components** - Login/register pages with Tailwind styling
+- **Type Safety** - End-to-end TypeScript from database to UI
+- **Smart Compilation** - Nx automatically regenerates Relay artifacts on schema changes
+- **Development Tools** - Prisma Studio for database management
 
-See [docs/product.md](docs/product.md) and [docs/tech.md](docs/tech.md) for more details.
+## Commands
 
-## Available Scripts
+```bash
+# Development
+npm run dev              # Start Next.js dev server
+npm run relay            # Generate Relay artifacts (auto-runs via Nx)
+npm run build            # Production build
 
-### Development
-- `npm run dev` - Start development server on port 3000 (auto-runs Relay compiler)
-- `npm run relay` - Manually generate Relay GraphQL types
-- `npx prisma studio` - Open Prisma Studio (database GUI)
+# Database
+npm run db:migrate       # Create and apply migrations
+npm run db:reset         # Reset database (destructive)
+npm run db:studio        # Open Prisma Studio GUI
 
-### Production
-- `npm run build` - Build for production
-- `npx nx build web` - Production build via Nx
-- `npm start` - Start production server
-
-### Database
-- `npx prisma generate` - Generate Prisma client
-- `npx prisma migrate dev` - Create and apply migrations
-- `npx prisma migrate deploy` - Apply migrations in production
-- `npx prisma db push` - Push schema changes without migrations
-
-### Testing
-- `npx nx test web` - Run unit tests
-- `npx nx e2e web-e2e` - Run E2E tests with Playwright
-
-### Code Quality
-- `npx nx lint web` - Lint the web app
-- `npx prettier --write .` - Format code
-
-### Nx Utilities
-- `npx nx show project web` - Show available targets
-- `npx nx graph` - View dependency graph
-- `npx nx reset` - Clear Nx cache
+# Monorepo
+npx nx graph             # Visualize project dependencies
+npx nx reset             # Clear Nx cache
+npx nx test web          # Run unit tests
+npx nx e2e web-e2e       # Run E2E tests
+```
 
 ## Environment Variables
 
@@ -184,42 +147,51 @@ NODE_ENV="development"
 DATABASE_URL="file:./dev.db"
 ```
 
-**Important**: Never commit `.env` to version control. Change `JWT_SECRET` in production.
+⚠️ **Security:** Never commit `.env` to version control. Generate a strong `JWT_SECRET` for production.
 
-> See [docs/database-setup.md](docs/database-setup.md) for PostgreSQL setup and connection string examples.
+📖 **See also:** [Database Setup Guide](docs/database-setup.md) for PostgreSQL configuration and connection pooling.
 
 ## Development Workflow
 
-### Making Database Changes
-1. Edit `prisma/schema.prisma`
-2. Run `npx prisma migrate dev --name your_migration_name`
-3. Run `npx prisma generate` to update the client
+### Modifying GraphQL Schema
+```bash
+# 1. Update schema and resolvers
+vim lib/graphql/schema.ts
+vim schema.graphql
 
-### Adding GraphQL Types
-1. Update `lib/graphql/schema.ts` (typeDefs and resolvers)
-2. Update `schema.graphql` to match
-3. Save files - NX automatically runs Relay compiler when it detects changes
-4. Use in components with `graphql` template tag
+# 2. Nx automatically regenerates Relay artifacts
+# 3. Use in components with type-safe hooks
+```
 
-*Note: In development mode, changes to `.ts/.tsx` files or `schema.graphql` automatically trigger Relay compilation via NX's dependency tracking.*
+### Database Migrations
+```bash
+# Modify schema
+vim prisma/schema.prisma
 
-### Creating New Pages
-1. Add page in `apps/web/app/`
-2. Use Relay for data fetching
-3. Protected routes: check JWT in API routes or use middleware
+# Create migration
+npm run db:migrate -- --name add_user_profile
 
-## Key Technologies
+# Prisma client auto-regenerates with new types
+```
 
-| Tool | Purpose | Why We Use It |
-|------|---------|---------------|
-| **Next.js 15** | React framework | App Router, RSC, API routes, optimizations |
-| **GraphQL Yoga** | GraphQL server | Lightweight, standards-compliant, easy setup |
-| **Relay** | GraphQL client | Performance, type safety, automatic caching |
-| **Prisma** | ORM | Type safety, migrations, database abstraction |
-| **Nx** | Build system | Monorepo management, caching, task orchestration |
-| **Tailwind CSS** | Styling | Utility-first, fast, customizable |
+### Adding Protected Routes
+```typescript
+// Use getContext in API routes for JWT verification
+export const getContext = (request: Request) => {
+  const authHeader = request.headers.get('authorization');
+  // Returns { userId } if valid token
+}
+```
 
-See [docs/tech.md](docs/tech.md) for in-depth technical details.
+## Why This Stack?
+
+- **Relay** - Best-in-class GraphQL client with normalized caching, eliminating redundant network requests
+- **Nx** - Industry-proven monorepo tool used by Google, Microsoft, and enterprise teams
+- **Prisma** - Type-safe database access prevents runtime errors and accelerates development
+- **Next.js 15** - Production-grade framework with optimal performance defaults
+- **GraphQL Yoga** - Minimal overhead, maximum flexibility for API development
+
+**Learn more:** [Technical Architecture](docs/tech.md) | [Product Features](docs/product.md) | [Project Structure](docs/structure.md)
 
 ## Architecture Overview
 
@@ -255,6 +227,13 @@ See [docs/tech.md](docs/tech.md) for in-depth technical details.
        └────────────────┘
 ```
 
+## Documentation
+
+- 📘 [Database Setup & PostgreSQL Migration](docs/database-setup.md)
+- 🏗️ [Technical Architecture](docs/tech.md)
+- 📦 [Project Structure](docs/structure.md)
+- 🎯 [Product Features](docs/product.md)
+
 ## License
 
-MIT
+MIT License - see [LICENSE](LICENSE) for details
