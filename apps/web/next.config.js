@@ -1,5 +1,9 @@
 //@ts-check
 
+// Load environment variables from root .env file
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next');
 

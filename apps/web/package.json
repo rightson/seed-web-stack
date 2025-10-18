@@ -6,6 +6,7 @@
     "relay": "relay-compiler"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "next": "^15.5.6",
     "react": "19.0.0",
     "react-dom": "19.0.0"
@@ -22,7 +23,9 @@
           "{workspaceRoot}/schema.graphql",
           "{workspaceRoot}/relay.config.js"
         ],
-        "outputs": ["{projectRoot}/__generated__"]
+        "outputs": [
+          "{projectRoot}/__generated__"
+        ]
       }
     }
   }

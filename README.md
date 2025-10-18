@@ -7,7 +7,7 @@ A production-ready web application starter template featuring a modern authentic
 - **Next.js 15** - React framework with App Router
 - **GraphQL Yoga** - Lightweight GraphQL server
 - **Relay** - High-performance GraphQL client
-- **Prisma** - Type-safe ORM with SQLite
+- **Prisma** - Type-safe ORM (PostgreSQL/SQLite)
 - **Tailwind CSS v4** - Utility-first CSS framework
 - **Nx** - Smart monorepo build system
 - **TypeScript** - End-to-end type safety
@@ -32,6 +32,12 @@ A production-ready web application starter template featuring a modern authentic
 2. **Environment Setup**
 
    Create a `.env` file in the root:
+   ```env
+   DATABASE_URL="postgresql://postgres:mypassword@localhost:5432/myapp"
+   JWT_SECRET="your-secret-key-change-in-production"
+   ```
+
+   **For SQLite (simpler, no DB server needed):**
    ```env
    DATABASE_URL="file:./dev.db"
    JWT_SECRET="your-secret-key-change-in-production"
@@ -117,7 +123,7 @@ See [docs/structure.md](docs/structure.md) for detailed information.
 ### Architecture
 - ✅ GraphQL API with Yoga
 - ✅ Optimized queries with Relay
-- ✅ SQLite database (easily swappable)
+- ✅ PostgreSQL/SQLite database support
 - ✅ Modern styling with Tailwind CSS v4
 - ✅ Component-based architecture
 - ✅ API route handlers
@@ -160,8 +166,11 @@ See [docs/product.md](docs/product.md) and [docs/tech.md](docs/tech.md) for more
 Create a `.env` file in the root:
 
 ```env
-# Database
-DATABASE_URL="file:./dev.db"
+# Database (PostgreSQL - recommended)
+DATABASE_URL="postgresql://postgres:mypassword@localhost:5432/myapp"
+
+# Database (SQLite - alternative, simpler setup)
+# DATABASE_URL="file:./dev.db"
 
 # Authentication
 JWT_SECRET="your-secret-key-change-in-production"
@@ -170,7 +179,14 @@ JWT_SECRET="your-secret-key-change-in-production"
 NODE_ENV="development"
 ```
 
+**SQLite Alternative (no DB server required):**
+```env
+DATABASE_URL="file:./dev.db"
+```
+
 **Important**: Never commit `.env` to version control. Change `JWT_SECRET` in production.
+
+> See [docs/database-setup.md](docs/database-setup.md) for PostgreSQL setup and connection string examples.
 
 ## Development Workflow
 
@@ -234,6 +250,7 @@ See [docs/tech.md](docs/tech.md) for in-depth technical details.
                 │
                 ▼
        ┌────────────────┐
+       │  PostgreSQL/   │
        │  SQLite DB     │
        └────────────────┘
 ```

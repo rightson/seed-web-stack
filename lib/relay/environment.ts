@@ -31,7 +31,20 @@ const fetchFn: FetchFunction = async (request, variables) => {
     }),
   });
 
-  return await resp.json();
+  const json = await resp.json();
+
+  // Check for HTTP errors
+  if (!resp.ok) {
+    throw new Error(json.message || `HTTP error ${resp.status}`);
+  }
+
+  // Check for GraphQL errors
+  if (json.errors) {
+    const errorMessage = json.errors.map((e: any) => e.message).join(', ');
+    throw new Error(errorMessage);
+  }
+
+  return json;
 };
 
 function createEnvironment() {
