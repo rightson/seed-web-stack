@@ -1,10 +1,11 @@
 {
-  "name": "@my-app/source",
+  "name": "seed-web-stack",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "relay": "relay-compiler",
-    "dev": "npm run relay && nx serve web",
+    "relay:watch": "relay-compiler --watch",
+    "dev": "concurrently \"npm run relay:watch\" \"nx dev web\"",
     "build": "npm run relay && nx build web"
   },
   "private": true,
@@ -52,6 +53,7 @@
     "autoprefixer": "^10.4.21",
     "babel-jest": "^30.0.2",
     "babel-plugin-relay": "^20.1.1",
+    "concurrently": "^9.2.1",
     "eslint": "^9.8.0",
     "eslint-config-next": "^15.2.4",
     "eslint-config-prettier": "^10.0.0",

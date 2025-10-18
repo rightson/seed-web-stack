@@ -1,10 +1,10 @@
 {
-  "name": "@my-app/web-e2e",
+  "name": "seed-web-stack-web-e2e",
   "version": "0.0.1",
   "private": true,
   "nx": {
     "implicitDependencies": [
-      "@my-app/web"
+      "seed-web-stack-web"
     ]
   }
 }
