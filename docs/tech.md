@@ -30,7 +30,7 @@ The Seed Web Stack follows a modern **monolithic full-stack architecture** with 
                  │ HTTP/GraphQL
                  ▼
 ┌────────────────────────────────────────────────────────────┐
-│            Next.js Server (Port 4200)                      │
+│            Next.js Server (Port 3000)                      │
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │  App Router (React Server Components)               │  │
 │  └──────────────────────────────────────────────────────┘  │
@@ -129,7 +129,7 @@ export function getContext(request: Request) {
 import { Environment, Network, RecordSource, Store } from 'relay-runtime';
 
 const fetchQuery = async (params, variables) => {
-  const response = await fetch('http://localhost:4200/api/graphql', {
+  const response = await fetch('http://localhost:3000/api/graphql', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -156,6 +156,47 @@ module.exports = {
   artifactDirectory: "./apps/web/__generated__"
 };
 ```
+
+**NX Integration** (`apps/web/package.json`):
+```json
+{
+  "nx": {
+    "targets": {
+      "relay": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "relay-compiler"
+        },
+        "inputs": [
+          "{projectRoot}/app/**/*.{ts,tsx}",
+          "{workspaceRoot}/schema.graphql",
+          "{workspaceRoot}/relay.config.js"
+        ],
+        "outputs": ["{projectRoot}/__generated__"]
+      }
+    }
+  }
+}
+```
+
+**Auto-Compilation** (`nx.json`):
+```json
+{
+  "targetDefaults": {
+    "dev": {
+      "dependsOn": ["^relay"]
+    },
+    "build": {
+      "dependsOn": ["^relay"]
+    }
+  }
+}
+```
+
+NX automatically runs the Relay compiler before dev/build when it detects changes to:
+- Any `.ts` or `.tsx` files in `apps/web/app/`
+- The `schema.graphql` file
+- The `relay.config.js` file
 
 **Usage Pattern**:
 ```typescript
@@ -184,6 +225,7 @@ function LoginPage() {
 - Efficient data fetching and caching
 - Co-location of data requirements with components
 - Production-proven (used by Meta/Facebook)
+- Zero external dependencies (no watchman required with NX integration)
 
 ### ORM: Prisma
 
@@ -250,23 +292,64 @@ const user = await prisma.user.findUnique({
   "targetDefaults": {
     "test": {
       "dependsOn": ["^build"]
+    },
+    "dev": {
+      "dependsOn": ["^relay"]
+    },
+    "build": {
+      "dependsOn": ["^relay"]
     }
   }
 }
 ```
 
+**Relay Integration** (`apps/web/package.json`):
+```json
+{
+  "nx": {
+    "targets": {
+      "relay": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "relay-compiler"
+        },
+        "inputs": [
+          "{projectRoot}/app/**/*.{ts,tsx}",
+          "{workspaceRoot}/schema.graphql",
+          "{workspaceRoot}/relay.config.js"
+        ],
+        "outputs": ["{projectRoot}/__generated__"]
+      }
+    }
+  }
+}
+```
+
+**Next.js Configuration** (`apps/web/next.config.js`):
+```javascript
+const nextConfig = {
+  nx: {
+    svgr: false  // Disable deprecated SVGR support
+  }
+};
+```
+
 **Benefits**:
 - **Computation Caching** - Only rebuild what changed
-- **Task Orchestration** - Run tasks in optimal order
+- **Task Orchestration** - Run tasks in optimal order based on dependencies
+- **Smart File Watching** - Automatically runs Relay compiler when inputs change
 - **Code Generation** - Scaffolding tools
 - **Dependency Graph** - Visualize project structure
 - **Affected Commands** - Only test/build affected projects
+- **No External Dependencies** - Uses Node.js native file watching (no watchman)
 
 **Why Nx?**
 - Built for TypeScript/Node monorepos
 - Scales to hundreds of projects
 - Great VS Code integration
 - Active community and plugins
+- Intelligent task dependency management
+- Built-in file watching for automated workflows
 
 ### Styling: Tailwind CSS
 
@@ -585,10 +668,10 @@ const LoginMutation = graphql`
 ┌─────────────┐
 │   relay     │ (Generate Relay types)
 └──────┬──────┘
-       │
+       │ (dependsOn)
        ▼
 ┌─────────────┐
-│   build     │ (Next.js build)
+│   dev/build │ (Next.js)
 └──────┬──────┘
        │
        ▼
@@ -597,20 +680,33 @@ const LoginMutation = graphql`
 └─────────────┘
 ```
 
+NX automatically runs tasks in the correct order based on `dependsOn` configuration.
+
 ### Code Generation Pipeline
 
 1. **GraphQL Schema** → `schema.graphql`
-2. **Relay Compiler** → Reads schema + component queries
-3. **Generated Types** → `apps/web/__generated__/*.ts`
-4. **TypeScript** → Type checks using generated types
-5. **Next.js Build** → Production bundle
+2. **NX detects changes** → Monitors inputs via file watching
+3. **Relay Compiler** → Reads schema + component queries
+4. **Generated Types** → `apps/web/__generated__/*.ts`
+5. **TypeScript** → Type checks using generated types
+6. **Next.js Build** → Production bundle
 
 ### Compilation Steps
 
+**Development** (with auto-compilation):
 ```bash
-npm run relay        # Step 1: Generate Relay artifacts
-npm run build        # Step 2: TypeScript → JavaScript (Next.js)
-npm start            # Step 3: Start production server
+npm run dev          # NX runs relay compiler automatically before starting dev server
+```
+
+**Production**:
+```bash
+npm run build        # NX runs relay compiler, then Next.js build
+npm start            # Start production server
+```
+
+**Manual** (when needed):
+```bash
+npm run relay        # Manually trigger Relay compilation
 ```
 
 ## Development Workflow
@@ -620,8 +716,7 @@ npm start            # Step 3: Start production server
 npm install                              # Install dependencies
 npx prisma generate                      # Generate Prisma client
 npx prisma migrate dev --name init       # Create database
-npm run relay                            # Generate Relay types
-npm run dev                              # Start dev server
+npm run dev                              # Start dev server (auto-runs relay)
 ```
 
 ### Making Changes
@@ -639,18 +734,20 @@ npx prisma generate
 ```bash
 # 1. Edit lib/graphql/schema.ts (typeDefs + resolvers)
 # 2. Update schema.graphql
-# 3. Regenerate Relay types
-npm run relay
+# 3. Save - NX automatically detects changes and runs relay compiler
 ```
 
 **UI Components**:
 ```bash
 # 1. Add/edit component in apps/web/app/
 # 2. Use graphql template tag for queries
-# 3. Save (Next.js hot reloads)
-# 4. Run relay compiler if GraphQL changed
-npm run relay
+# 3. Save - Next.js hot reloads, NX runs relay compiler if needed
 ```
+
+**Note**: In development mode (`npm run dev`), NX automatically monitors file changes and runs the Relay compiler when it detects modifications to:
+- TypeScript/TSX files in `apps/web/app/`
+- `schema.graphql`
+- `relay.config.js`
 
 ### Testing
 

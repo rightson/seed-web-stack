@@ -43,17 +43,14 @@ A production-ready web application starter template featuring a modern authentic
    npx prisma migrate dev --name init
    ```
 
-4. **Generate GraphQL Types**
-   ```bash
-   npm run relay
-   ```
-
-5. **Start Development Server**
+4. **Start Development Server**
    ```bash
    npm run dev
    ```
 
-Visit [http://localhost:4200](http://localhost:4200) to see your app.
+   *Note: Relay GraphQL types are automatically generated when you run `npm run dev`. NX detects GraphQL code changes and triggers the Relay compiler automatically.*
+
+Visit [http://localhost:3000](http://localhost:3000) to see your app.
 
 ## Project Structure
 
@@ -112,9 +109,10 @@ See [docs/structure.md](docs/structure.md) for detailed information.
 - ✅ Full TypeScript support
 - ✅ Type-safe database queries with Prisma
 - ✅ Auto-generated GraphQL types with Relay
+- ✅ Automatic Relay compilation on file changes (NX watch)
 - ✅ Hot reload and fast refresh
 - ✅ Monorepo structure with Nx
-- ✅ Code generation workflow
+- ✅ Zero external dependencies (no watchman required)
 
 ### Architecture
 - ✅ GraphQL API with Yoga
@@ -129,10 +127,9 @@ See [docs/product.md](docs/product.md) and [docs/tech.md](docs/tech.md) for more
 ## Available Scripts
 
 ### Development
-- `npm run dev` - Start development server on port 4200
-- `npm run relay` - Generate Relay GraphQL types
+- `npm run dev` - Start development server on port 3000 (auto-runs Relay compiler)
+- `npm run relay` - Manually generate Relay GraphQL types
 - `npx prisma studio` - Open Prisma Studio (database GUI)
-- `npx nx serve web` - Run dev server via Nx
 
 ### Production
 - `npm run build` - Build for production
@@ -185,8 +182,10 @@ NODE_ENV="development"
 ### Adding GraphQL Types
 1. Update `lib/graphql/schema.ts` (typeDefs and resolvers)
 2. Update `schema.graphql` to match
-3. Run `npm run relay` to generate TypeScript types
+3. Save files - NX automatically runs Relay compiler when it detects changes
 4. Use in components with `graphql` template tag
+
+*Note: In development mode, changes to `.ts/.tsx` files or `schema.graphql` automatically trigger Relay compilation via NX's dependency tracking.*
 
 ### Creating New Pages
 1. Add page in `apps/web/app/`
@@ -215,7 +214,7 @@ See [docs/tech.md](docs/tech.md) for in-depth technical details.
        │
        ▼
 ┌─────────────────────────────────┐
-│  Next.js App (Port 4200)        │
+│  Next.js App (Port 3000)        │
 │  ┌──────────────────────────┐   │
 │  │   React Components       │   │
 │  │   (with Relay hooks)     │   │

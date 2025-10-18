@@ -2,9 +2,28 @@
   "name": "seed-web-stack-web",
   "version": "0.0.1",
   "private": true,
+  "scripts": {
+    "relay": "relay-compiler"
+  },
   "dependencies": {
     "next": "^15.5.6",
     "react": "19.0.0",
     "react-dom": "19.0.0"
+  },
+  "nx": {
+    "targets": {
+      "relay": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "relay-compiler"
+        },
+        "inputs": [
+          "{projectRoot}/app/**/*.{ts,tsx}",
+          "{workspaceRoot}/schema.graphql",
+          "{workspaceRoot}/relay.config.js"
+        ],
+        "outputs": ["{projectRoot}/__generated__"]
+      }
+    }
   }
 }

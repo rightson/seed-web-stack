@@ -62,6 +62,12 @@
   "targetDefaults": {
     "test": {
       "dependsOn": ["^build"]
+    },
+    "dev": {
+      "dependsOn": ["^relay"]
+    },
+    "build": {
+      "dependsOn": ["^relay"]
     }
   },
   "generators": {
